@@ -77,7 +77,7 @@ K
 
 __yn=`cat <<-Y
 #!/bin/bash
-[[ ! "\\\$1" == "" && ! "\\\$2" == "" && ! "\\\$3" == "" ]] && ( read -p "\\\$1 " yn; [[ "\\\${yn,}" =~ 'y' ]] && eval \\\$2 || eval \\\$3 ) || echo "Cannot process yn context!"
+[[ ! "\\\$1" == "" && ! "\\\$2" == "" && ! "\\\$3" == "" ]] && ( read -p "\\\$1 " yn; [[ "\\\${yn,}" =~ 'y' ]] && eval \\\$2 || eval \\\$3 ) || ( echo "Cannot process yn context!"; exit 1 )
 Y
 `
 
