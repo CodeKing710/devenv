@@ -71,7 +71,7 @@ SC
 `
 __kjob=`cat <<-K
 #!/bin/bash
-[ -z "\\\$1" ] && echo "Usage: killjob [PROCESS_NAME]" || ( ps | grep \\\$1 | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
+[ -z "\\\$1" ] && echo "Usage: kjob <processname>" || ( ps | grep \\\$1 | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
 K
 `
 
@@ -79,6 +79,12 @@ __yn=`cat <<-Y
 #!/bin/bash
 [[ ! "\\\$1" == "" && ! "\\\$2" == "" && ! "\\\$3" == "" ]] && ( read -p "\\\$1 " yn; [[ "\\\${yn,}" =~ 'y' ]] && eval \\\$2 || eval \\\$3 ) || ( echo "Cannot process yn context!"; exit 1 )
 Y
+`
+
+__cal=`cat <<-CAL
+#!/bin/bash
+[ -z "\\\$1" ] && (while true; do read -p "> " expr; [[ "\\\$expr" =~ "q" ]] && exit || echo "\\\${expr}=\\\$((\\\${expr}))"; done ) || ( for arg in \\\$@; do echo "\\\${arg}=\\\$((\\\${arg}))"; done )
+CAL
 `
 
 __rcupdate=`cat <<-RC
@@ -109,6 +115,7 @@ RC
 [ ! -e $HOME/bin/smart-rm ] && echo "$__smartrm" > $HOME/bin/smart-rm
 [ ! -e $HOME/bin/smart-cp ] && echo "$__smartcp" > $HOME/bin/smart-cp
 [ ! -e $HOME/bin/yn ] && echo "$__yn" > $HOME/bin/yn
+[ ! -e $HOME/bin/cal ] && echo "$__cal" > $HOME/bin/cal
 
 # Ask to install BSM
 read -p "Would you like Bash Script Manager installed? [Y/n] " yn
@@ -128,4 +135,4 @@ chgrp $USER $HOME/bin/*
 chmod u+x $HOME/bin/*
 
 # Cleanup
-unset __alias __prompt __smartrm __smartcp __yn __kjob __rcupdate
+unset __alias __prompt __smartrm __smartcp __yn __kjob __rcupdate __cal
