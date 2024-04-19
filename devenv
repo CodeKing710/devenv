@@ -148,7 +148,7 @@ chmod -R u+x $HOME/bin/*
 # Ask if user wants to remove the repo since the environment is setup
 read -p "Would you like to delete the repo? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
-  rm -r $(find ~ -type d -name devenv)
+  rm -rf $(find ~ -type d -name devenv)
 fi
 
 # Cleanup
