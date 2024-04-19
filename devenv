@@ -117,22 +117,39 @@ RC
 [ ! -e $HOME/bin/yn ] && echo "$__yn" > $HOME/bin/yn
 [ ! -e $HOME/bin/cal ] && echo "$__cal" > $HOME/bin/cal
 
-# Ask to install BSM
-read -p "Would you like Bash Script Manager installed? [Y/n] " yn
-[[ "${yn,}" == 'y' ]] && ( cd $HOME/repos && git clone https://github.com/CodeKing710/Bash-Script-Manager && cd Bash-Script-Manager && ./bsm-install -i; cd $__cwd )
-
-# Ask to install RepoInstaller
-read -p "Would you like Repo Installer installed? [Y/n] " yn
-[[ "${yn,}" == 'y' ]] && ( cd $HOME/repos && git clone https://github.com/CodeKing710/Repo-Installer && cd Repo-Installer && ./ri; cd $__cwd )
-
-# Ask to install ChangePath
-read -p "Would you like Change Path installed? [Y/n] " yn
-[[ "${yn,}" == 'y' ]] && ( cd $HOME/repos && git clone https://github.com/CodeKing710/Change-Path && cd Change-Path && cp ./Change-Path/chpath $HOME/bin; cd $__cwd )
+# Ask about installing helper programs
+# BSM
+read -p "Would you like to install the script manager? " yn
+if [[ "${yn,,}" =~ "y" ]]; then
+  cd ~/repos
+  git clone https://github.com/CodeKing710/Bash-Script-Manager
+  cd $__cwd
+fi
+# CLApp
+read -p "Would you like to install the CLI app generator? " yn
+if [[ "${yn,,}" =~ "y" ]]; then
+  cd ~/repos
+  git clone https://github.com/CodeKing710/CLApp
+  cd $__cwd
+fi
+# VEM
+read -p "Would you like to install the Virtual Environment Manager? " yn
+if [[ "${yn,,}" =~ "y" ]]; then
+  cd ~/repos
+  git clone https://github.com/CodeKing710/VEM
+  cd $__cwd
+fi
 
 # Make all new bin scripts executable
 chown $USER $HOME/bin/*
 chgrp $USER $HOME/bin/*
 chmod u+x $HOME/bin/*
 
+# Ask if user wants to remove the repo since the environment is setup
+read -p "Would you like to delete the repo? " yn
+if [[ "${yn,,}" =~ "y" ]]; then
+  rm -r $(find ~ -type d -name devenv)
+fi
+
 # Cleanup
-unset __alias __prompt __smartrm __smartcp __yn __kjob __rcupdate __cal
+unset __alias __prompt __smartrm __smartcp __yn __kjob __rcupdate __cal yn __cwd
