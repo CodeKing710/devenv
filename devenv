@@ -25,9 +25,9 @@ alias ipkg="sudo apt install"
 
 ### Other aliases ###
 # Git
-alias reposync="__cwd=\\\`pwd\\\`; for repo in ~/repos/*; do cd \\\\\$repo; echo \\\"\\\\\$repo\\\" | rev | cut -d '/' -f1 | rev; pull; push; echo ' '; done; echo 'Repos up-to-date!'; cd \\\\\$__cwd; unset repo __cwd"
 alias pull="git pull"
 alias push="git push"
+alias reposync="__cwd=\\\`pwd\\\`; for repo in ~/repos/*; do cd \\\$repo; if [[ ~ \\\`git status\\\` =~ 'up to date' ]]; then basename \\\$repo; pull; push; echo ' '; fi; done; cd \\\$__cwd; unset repo __cwd"
 
 # VENV
 alias de="deactivate"
@@ -35,13 +35,16 @@ alias de="deactivate"
 ### Rebound Aliases ###
 # Clear
 alias fclear="tput clear"
-alias clear="tput -x clear"
+alias clear="tput -x clear" # Adjust by adding \\\`printf "%\\\$((\\\$COLUMNS*\\\$LINES))s";\\\`
 alias fclr="fclear"
 alias clr="clear"
 
 # Remove and Copy
 alias rm="smart-rm"
 alias cp="smart-cp"
+
+### Execute aliases ###
+reposync
 A
 `
 __prompt=`cat <<-P
@@ -74,19 +77,16 @@ __kjob=`cat <<-K
 [ -z "\\\$1" ] && echo "Usage: kjob <processname>" || ( ps | grep \\\$1 | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
 K
 `
-
 __yn=`cat <<-Y
 #!/bin/bash
 [[ ! "\\\$1" == "" && ! "\\\$2" == "" && ! "\\\$3" == "" ]] && ( read -p "\\\$1 " yn; [[ "\\\${yn,}" =~ 'y' ]] && eval \\\$2 || eval \\\$3 ) || ( echo "Cannot process yn context!"; exit 1 )
 Y
 `
-
 __cal=`cat <<-CAL
 #!/bin/bash
 [ -z "\\\$1" ] && (while true; do read -p "> " expr; [[ "\\\$expr" =~ "q" ]] && exit || echo "\\\${expr}=\\\$((\\\${expr}))"; done ) || ( for arg in \\\$@; do echo "\\\${arg}=\\\$((\\\${arg}))"; done )
 CAL
 `
-
 __rcupdate=`cat <<-RC
 # ENV EXT
 if [ -d \\\$HOME/.d ]; then
@@ -100,7 +100,7 @@ RC
 `
 
 # Ensure env vars are good
-[ -z "$USER" ] && USER=`id -u -n`
+[ -z "$USER" ] && echo 'USER=`id -u -n`' >> $HOME/.bashrc
 
 # Ensure user's .bashrc file contains .d check
 [[ ! "`cat $HOME/.bashrc`" =~ "# ENV EXT" ]] && echo "$__rcupdate" >> $HOME/.bashrc
@@ -121,29 +121,29 @@ RC
 # BSM
 read -p "Would you like to install the script manager? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
-  cd ~/repos
+  cd $HOME/repos
   git clone https://github.com/CodeKing710/Bash-Script-Manager
   cd $__cwd
 fi
 # CLApp
 read -p "Would you like to install the CLI app generator? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
-  cd ~/repos
+  cd $HOME/repos
   git clone https://github.com/CodeKing710/CLApp
   cd $__cwd
 fi
 # VEM
 read -p "Would you like to install the Virtual Environment Manager? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
-  cd ~/repos
+  cd $HOME/repos
   git clone https://github.com/CodeKing710/VEM
   cd $__cwd
 fi
 
 # Make all new bin scripts executable
-chown $USER $HOME/bin/*
-chgrp $USER $HOME/bin/*
-chmod u+x $HOME/bin/*
+chown -R $USER $HOME/bin/*
+chgrp -R $USER $HOME/bin/*
+chmod -R u+x $HOME/bin/*
 
 # Ask if user wants to remove the repo since the environment is setup
 read -p "Would you like to delete the repo? " yn
@@ -152,4 +152,6 @@ if [[ "${yn,,}" =~ "y" ]]; then
 fi
 
 # Cleanup
-unset __alias __prompt __smartrm __smartcp __yn __kjob __rcupdate __cal yn __cwd
+if [ "$$" -eq "$BASHPID" ]; then
+  unset __alias __prompt __smartrm __smartcp __yn __kjob __rcupdate __cal yn __cwd
+fi
