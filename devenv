@@ -27,7 +27,7 @@ alias ipkg="sudo apt install"
 # Git
 alias pull="git pull"
 alias push="git push"
-alias reposync="__cwd=\\\`pwd\\\`; for repo in ~/repos/*; do cd \\\$repo; if [[ ~ \\\`git status\\\` =~ 'up to date' ]]; then basename \\\$repo; pull; push; echo ' '; fi; done; cd \\\$__cwd; unset repo __cwd"
+alias reposync="__cwd=\\\`pwd\\\`; for repo in ~/repos/*; do cd \\\$repo; if [[ \\\`git status\\\` =~ 'pu' ]]; then basename \\\$repo; pull; push; echo ' '; fi; done; cd \\\$__cwd; unset repo __cwd"
 
 # VENV
 alias de="deactivate"
