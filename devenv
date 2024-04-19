@@ -129,7 +129,7 @@ fi
 read -p "Would you like to install the CLI app generator? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
   cd $HOME/repos
-  git clone https://github.com/CodeKing710/CLApp
+  git clone https://github.com/CodeKing710/clapp
   cd $__cwd
 fi
 # VEM
