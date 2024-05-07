@@ -58,11 +58,11 @@ P
 `
 __smartrm=`cat <<-SR
 #!/bin/bash
-for arg in \\\$@; do
-  if [ -d \\\$arg ]; then
-    rm -rf \\\$arg
+for arg in "\\\$@"; do
+  if [ -d "\\\$arg" ]; then
+    rm -rf "\\\$arg"
   else
-    rm -f \\\$arg
+    rm -f "\\\$arg"
   fi
 done
 SR
