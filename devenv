@@ -56,15 +56,15 @@ __prompt=`cat <<- P
 	unset PS1_GIT
 P
 `
-__smartrm=`cat <<- SR
-	#!/bin/bash
-	for arg in "\\\$@"; do
-		if [ -d "\\\$arg" ]; then
-			rm -rf "\\\$arg"
-		else
-			rm -f "\\\$arg"
-		fi
-	done
+__smartrm=`cat << SR
+#!/bin/bash
+for arg in "\\\$@"; do
+	if [ -d "\\\$arg" ]; then
+		rm -rf "\\\$arg"
+	else
+		rm -f "\\\$arg"
+	fi
+done
 SR
 `
 __smartcp=`cat <<- SC
@@ -87,15 +87,15 @@ __cal=`cat <<- CAL
 	[ -z "\\\$1" ] && (while true; do read -p "> " expr; [[ "\\\$expr" =~ "q" ]] && exit || echo "\\\${expr}=\\\$((\\\${expr}))"; done ) || ( for arg in \\\$@; do echo "\\\${arg}=\\\$((\\\${arg}))"; done )
 CAL
 `
-__rcupdate=`cat <<- RC
-	# ENV EXT
-	if [ -d \\\$HOME/.d ]; then
-		for rc in \\\$HOME/.d/*; do
-			if [ -f "\\\$rc" ]; then
-				. "\\\$rc"
-			fi
-		done
-	fi
+__rcupdate=`cat << RC
+# ENV EXT
+if [ -d \\\$HOME/.d ]; then
+	for rc in \\\$HOME/.d/*; do
+		if [ -f "\\\$rc" ]; then
+			. "\\\$rc"
+		fi
+	done
+fi
 RC
 `
 
