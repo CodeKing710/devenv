@@ -119,21 +119,21 @@ RC
 
 # Ask about installing helper programs
 # BSM
-read -p "Would you like to install the script manager? " yn
+read -rp "Would you like to install the script manager? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/Bash-Script-Manager
 	cd "$__cwd" || exit
 fi
 # CLApp
-read -p "Would you like to install the CLI app generator? " yn
+read -rp "Would you like to install the CLI app generator? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/clapp
 	cd "$__cwd" || exit
 fi
 # VEM
-read -p "Would you like to install the Virtual Environment Manager? " yn
+read -rp "Would you like to install the Virtual Environment Manager? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/VEM
@@ -146,7 +146,7 @@ chgrp -R "$USER" "$HOME"/bin/*
 chmod -R +x "$HOME"/bin/*
 
 # Ask if user wants to remove the repo since the environment is setup
-read -p "Would you like to delete the repo? " yn
+read -rp "Would you like to delete the repo? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
 	rm -rf "$(find ~ -type d -name devenv)"
 fi
