@@ -3,8 +3,8 @@
 # Sets up a common environment (Bash/GitBash)
 
 # Vars
-__cwd=`pwd`
-__alias=`cat <<- A
+__cwd=$(pwd)
+__alias=$(cat <<- A
 	### Safety nets ###
 	alias chgrp="chgrp --preserve-root"
 	alias chown="chown --preserve-root"
@@ -46,8 +46,8 @@ __alias=`cat <<- A
 	### Execute aliases ###
 	reposync
 A
-`
-__prompt=`cat <<- P
+)
+__prompt=$(cat <<- P
 	PS1_GIT='\\\`[[ "\\\$(git branch 2>/dev/null | cut -d " " -f2)" == "" ]] && echo "" || echo "(\\\$(git branch 2>/dev/null | cut -d " " -f2)) "\\\`'
 	PS1='\[\033]0;\u:\\\$PWD\007\]'
 	PS1="\\\$PS1"'\[\e[92m\]\u\[\e[0m\]@\[\e[38;5;27m\]\h\[\e[0m\] \[\e[95m\]\w\[\e[96m\] '
@@ -55,8 +55,8 @@ __prompt=`cat <<- P
 	PS1="\\\$PS1"'\[\e[0m\]\$ '
 	unset PS1_GIT
 P
-`
-__smartrm=`cat << SR
+)
+__smartrm=$(cat << SR
 #!/bin/bash
 for arg in "\\\$@"; do
 	if [ -d "\\\$arg" ]; then
@@ -66,28 +66,28 @@ for arg in "\\\$@"; do
 	fi
 done
 SR
-`
-__smartcp=`cat <<- SC
+)
+__smartcp=$(cat <<- SC
 	#!/bin/bash
 	[ -d \\\$1 ] && cp -r \\\$1 \\\$2 || cp \\\$1 \\\$2
 SC
-`
-__kjob=`cat <<- K
+)
+__kjob=$(cat <<- K
 	#!/bin/bash
 	[ -z "\\\$1" ] && echo "Usage: kjob <processname>" || ( ps | grep \\\$1 | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
 K
-`
-__yn=`cat <<- Y
+)
+__yn=$(cat <<- Y
 	#!/bin/bash
 	[[ ! "\\\$1" == "" && ! "\\\$2" == "" && ! "\\\$3" == "" ]] && ( read -p "\\\$1 " yn; [[ "\\\${yn,}" =~ 'y' ]] && eval \\\$2 || eval \\\$3 ) || ( echo "Cannot process yn context!"; exit 1 )
 Y
-`
-__cal=`cat <<- CAL
+)
+__cal=$(cat <<- CAL
 	#!/bin/bash
 	[ -z "\\\$1" ] && (while true; do read -p "> " expr; [[ "\\\$expr" =~ "q" ]] && exit || echo "\\\${expr}=\\\$((\\\${expr}))"; done ) || ( for arg in \\\$@; do echo "\\\${arg}=\\\$((\\\${arg}))"; done )
 CAL
-`
-__rcupdate=`cat << RC
+)
+__rcupdate=$(cat << RC
 # ENV EXT
 if [ -d \\\$HOME/.d ]; then
 	for rc in \\\$HOME/.d/*; do
@@ -97,58 +97,58 @@ if [ -d \\\$HOME/.d ]; then
 	done
 fi
 RC
-`
+)
 
 # Ensure env vars are good
-[ -z "$USER" ] && echo 'USER=`id -u -n`' >> $HOME/.bashrc
+[ -z "$USER" ] && echo 'USER=`id -u -n`' >> "$HOME"/.bashrc
 
 # Ensure user's .bashrc file contains .d check
-[[ ! "`cat $HOME/.bashrc`" =~ "# ENV EXT" ]] && echo "$__rcupdate" >> $HOME/.bashrc
+[[ ! "$(cat "$HOME"/.bashrc)" =~ "# ENV EXT" ]] && echo "$__rcupdate" >> "$HOME"/.bashrc
 
 # Setup user's home directory
-[ ! -d $HOME/bin ] && mkdir $HOME/bin
-[ ! -d $HOME/.d ] && mkdir $HOME/.d
-[ ! -d $HOME/repos ] && mkdir $HOME/repos
-[ ! -e $HOME/.d/alias ] && echo "$__alias" > $HOME/.d/alias
-[ ! -e $HOME/.d/prompt ] && echo "$__prompt" > $HOME/.d/prompt
-[ ! -e $HOME/bin/kjob ] && echo "$__kjob" > $HOME/bin/kjob
-[ ! -e $HOME/bin/smart-rm ] && echo "$__smartrm" > $HOME/bin/smart-rm
-[ ! -e $HOME/bin/smart-cp ] && echo "$__smartcp" > $HOME/bin/smart-cp
-[ ! -e $HOME/bin/yn ] && echo "$__yn" > $HOME/bin/yn
-[ ! -e $HOME/bin/cal ] && echo "$__cal" > $HOME/bin/cal
+[ ! -d "$HOME"/bin ] && mkdir "$HOME"/bin
+[ ! -d "$HOME"/.d ] && mkdir "$HOME"/.d
+[ ! -d "$HOME"/repos ] && mkdir "$HOME"/repos
+[ ! -e "$HOME"/.d/alias ] && echo "$__alias" > "$HOME"/.d/alias
+[ ! -e "$HOME"/.d/prompt ] && echo "$__prompt" > "$HOME"/.d/prompt
+[ ! -e "$HOME"/bin/kjob ] && echo "$__kjob" > "$HOME"/bin/kjob
+[ ! -e "$HOME"/bin/smart-rm ] && echo "$__smartrm" > "$HOME"/bin/smart-rm
+[ ! -e "$HOME"/bin/smart-cp ] && echo "$__smartcp" > "$HOME"/bin/smart-cp
+[ ! -e "$HOME"/bin/yn ] && echo "$__yn" > "$HOME"/bin/yn
+[ ! -e "$HOME"/bin/cal ] && echo "$__cal" > "$HOME"/bin/cal
 
 # Ask about installing helper programs
 # BSM
 read -p "Would you like to install the script manager? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
-	cd $HOME/repos
+	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/Bash-Script-Manager
-	cd $__cwd
+	cd "$__cwd" || exit
 fi
 # CLApp
 read -p "Would you like to install the CLI app generator? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
-	cd $HOME/repos
+	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/clapp
-	cd $__cwd
+	cd "$__cwd" || exit
 fi
 # VEM
 read -p "Would you like to install the Virtual Environment Manager? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
-	cd $HOME/repos
+	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/VEM
-	cd $__cwd
+	cd "$__cwd" || exit
 fi
 
 # Make all new bin scripts executable
-chown -R $USER $HOME/bin/*
-chgrp -R $USER $HOME/bin/*
-chmod -R +x $HOME/bin/*
+chown -R "$USER" "$HOME"/bin/*
+chgrp -R "$USER" "$HOME"/bin/*
+chmod -R +x "$HOME"/bin/*
 
 # Ask if user wants to remove the repo since the environment is setup
 read -p "Would you like to delete the repo? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
-	rm -rf $(find ~ -type d -name devenv)
+	rm -rf "$(find ~ -type d -name devenv)"
 fi
 
 # Cleanup
