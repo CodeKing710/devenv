@@ -27,7 +27,7 @@ __alias=$(cat <<- A
 	# Git
 	alias pull="git pull"
 	alias push="git push"
-	alias reposync="__cwd=\\\`pwd\\\`; for repo in ~/repos/*; do cd \\\$repo; if [[ \\\`git status\\\` =~ 'pu' ]]; then basename \\\$repo; pull; push; echo ' '; fi; done; cd \\\$__cwd; unset repo __cwd"
+	alias reposync="__cwd=\\\$(pwd); for repo in ~/repos/*; do cd \\\$repo; basename \\\$repo; pull; push; echo ' '; fi; done; cd \\\$__cwd; unset repo __cwd"
 
 	# VENV
 	alias de="deactivate"
@@ -35,7 +35,7 @@ __alias=$(cat <<- A
 	### Rebound Aliases ###
 	# Clear
 	alias fclear="tput clear"
-	alias clear="tput -x clear" # Adjust by adding \\\`printf "%\\\$((\\\$COLUMNS*\\\$LINES))s";\\\`
+	alias clear="tput -x clear" # Adjust by adding \\\$(printf "%\\\$((\\\$COLUMNS*\\\$LINES))s";)
 	alias fclr="fclear"
 	alias clr="clear"
 
@@ -48,7 +48,7 @@ __alias=$(cat <<- A
 A
 )
 __prompt=$(cat <<- P
-	PS1_GIT='\\\`[[ "\\\$(git branch 2>/dev/null | cut -d " " -f2)" == "" ]] && echo "" || echo "(\\\$(git branch 2>/dev/null | cut -d " " -f2)) "\\\`'
+	PS1_GIT='\\\$([[ "\\\$(git branch 2>/dev/null | cut -d " " -f2)" == "" ]] && echo "" || echo "(\\\$(git branch 2>/dev/null | cut -d " " -f2)) ")'
 	PS1='\[\033]0;\u:\\\$PWD\007\]'
 	PS1="\\\$PS1"'\[\e[92m\]\u\[\e[0m\]@\[\e[38;5;27m\]\h\[\e[0m\] \[\e[95m\]\w\[\e[96m\] '
 	PS1="\\\$PS1""\\\$PS1_GIT"
@@ -69,17 +69,17 @@ SR
 )
 __smartcp=$(cat <<- SC
 	#!/bin/bash
-	[ -d \\\$1 ] && cp -r \\\$1 \\\$2 || cp \\\$1 \\\$2
+	[[ -d "\\\$1" ]] && cp -r "\\\${1}" "\\\${2}/" || cp "\\\${1}" "\\\${2}/\\\${1}"
 SC
 )
 __kjob=$(cat <<- K
 	#!/bin/bash
-	[ -z "\\\$1" ] && echo "Usage: kjob <processname>" || ( ps | grep \\\$1 | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
+	[ -z "\\\$1" ] && echo "Usage: kjob <processname>" || ( ps | grep "\\\$1" | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
 K
 )
 __yn=$(cat <<- Y
 	#!/bin/bash
-	[[ ! "\\\$1" == "" && ! "\\\$2" == "" && ! "\\\$3" == "" ]] && ( read -p "\\\$1 " yn; [[ "\\\${yn,}" =~ 'y' ]] && eval \\\$2 || eval \\\$3 ) || ( echo "Cannot process yn context!"; exit 1 )
+	[[ ! "\\\$1" == "" && ! "\\\$2" == "" && ! "\\\$3" == "" ]] && ( read -rp "\\\$1 " yn; [[ "\\\${yn,}" =~ 'y' ]] && eval "\\\$2" || eval "\\\$3" ) || ( echo "Cannot process yn context!"; exit 1 )
 Y
 )
 __cal=$(cat <<- CAL
@@ -122,7 +122,7 @@ RC
 read -rp "Would you like to install the script manager? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
-	git clone https://github.com/CodeKing710/Bash-Script-Manager
+	git clone https://github.com/CodeKing710/bsm
 	cd "$__cwd" || exit
 fi
 # CLApp
@@ -136,7 +136,14 @@ fi
 read -rp "Would you like to install the Virtual Environment Manager? " yn
 if [[ "${yn,,}" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
-	git clone https://github.com/CodeKing710/VEM
+	git clone https://github.com/CodeKing710/vem
+	cd "$__cwd" || exit
+fi
+# CHPATH
+read -rp "Would you like to install the Path Manager? " yn
+if [[ "${yn,,}" =~ "y" ]]; then
+	cd "$HOME"/repos || exit
+	git clone https://github.com/CodeKing710/chpath
 	cd "$__cwd" || exit
 fi
 
