@@ -15,12 +15,13 @@ __alias=$(cat <<- A
 
 	### QOL aliases ###
 	alias update="sudo apt update; sudo apt upgrade -y"
-	alias reload="[ -f ~/.d/rc ] && source ~/.d/rc || source ~/.bashrc"
+	alias reload="source ~/.bashrc"
 	alias shutdown="shutdown now"
 	alias tping="time ping"
-	alias edit-a="nano ~/.d/alias"
-	alias edit-p="nano ~/.d/prompt"
+	alias edit-a="[ -f ~/.d/alias?(es) ] && nano ~/.d/alias?(es) || nano ~/.*(alias)?(es)"
 	alias edit-rc="[ -f ~/.d/rc ] && nano ~/.d/rc || nano ~/.bashrc"
+	alias edit-p="nano ~/.d/prompt"
+	alias edit-p="nano ~/.d/funcs"
 	alias ipkg="sudo apt install"
 
 	### Other aliases ###
@@ -36,15 +37,16 @@ __alias=$(cat <<- A
 	# Clear
 	alias fclear="tput clear"
 	alias clear="tput -x clear" # Adjust by adding \\\$(printf "%\\\$((\\\$COLUMNS*\\\$LINES))s";)
-	alias fclr="fclear"
-	alias clr="clear"
+	## Uncomment the below ones if you want shorthand
+	#alias fclr="fclear"
+	#alias clr="clear"
 
 	# Remove and Copy
 	alias rm="smart-rm"
 	alias cp="smart-cp"
 
 	### Execute aliases ###
-	reposync
+	#reposync
 A
 )
 __prompt=$(cat <<- P
@@ -99,6 +101,20 @@ fi
 RC
 )
 
+__funcs=$(cat << FUNC
+prompt() {
+	local err=0
+	trap 'return \\\$err' SIGINT
+	history -w
+	history -c
+	read -rep "\\\$*" var
+	echo "\\\$var"
+	history -r
+	return \\\$err
+}; export -f prompt
+FUNC
+)
+
 # Ensure env vars are good
 [ -z "$USER" ] && echo 'USER=`id -u -n`' >> "$HOME"/.bashrc
 
@@ -111,6 +127,7 @@ RC
 [ ! -d "$HOME"/repos ] && mkdir "$HOME"/repos
 [ ! -e "$HOME"/.d/alias ] && echo "$__alias" > "$HOME"/.d/alias
 [ ! -e "$HOME"/.d/prompt ] && echo "$__prompt" > "$HOME"/.d/prompt
+[ ! -e "$HOME"/.d/funcs ] && echo "$__funcs" > "$HOME"/.d/funcs
 [ ! -e "$HOME"/bin/kjob ] && echo "$__kjob" > "$HOME"/bin/kjob
 [ ! -e "$HOME"/bin/smart-rm ] && echo "$__smartrm" > "$HOME"/bin/smart-rm
 [ ! -e "$HOME"/bin/smart-cp ] && echo "$__smartcp" > "$HOME"/bin/smart-cp
