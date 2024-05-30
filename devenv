@@ -28,7 +28,7 @@ __alias=$(cat <<- A
 	# Git
 	alias pull="git pull"
 	alias push="git push"
-	alias reposync="__cwd=\\\$(pwd); for repo in ~/repos/*; do cd \\\$repo; basename \\\$repo; pull; push; echo ' '; fi; done; cd \\\$__cwd; unset repo __cwd"
+	alias reposync="__cwd=\$(pwd); for repo in ~/repos/*; do cd \$repo; basename \$repo; pull; push; echo ' '; fi; done; cd \$__cwd; unset repo __cwd"
 
 	# VENV
 	alias de="deactivate"
@@ -36,7 +36,7 @@ __alias=$(cat <<- A
 	### Rebound Aliases ###
 	# Clear
 	alias fclear="tput clear"
-	alias clear="tput -x clear" # Adjust by adding \\\$(printf "%\\\$((\\\$COLUMNS*\\\$LINES))s";)
+	alias clear="tput -x clear" # Adjust by adding \$(printf "%\$((\$COLUMNS*\$LINES))s";)
 	## Uncomment the below ones if you want shorthand
 	#alias fclr="fclear"
 	#alias clr="clear"
@@ -50,51 +50,61 @@ __alias=$(cat <<- A
 A
 )
 __prompt=$(cat <<- P
-	PS1_GIT='\\\$([[ "\\\$(git branch 2>/dev/null | cut -d " " -f2)" == "" ]] && echo "" || echo "(\\\$(git branch 2>/dev/null | cut -d " " -f2)) ")'
-	PS1='\[\033]0;\u:\\\$PWD\007\]'
-	PS1="\\\$PS1"'\[\e[92m\]\u\[\e[0m\]@\[\e[38;5;27m\]\h\[\e[0m\] \[\e[95m\]\w\[\e[96m\] '
-	PS1="\\\$PS1""\\\$PS1_GIT"
-	PS1="\\\$PS1"'\[\e[0m\]\$ '
+	PS1_GIT='\$([[ "\$(git branch 2>/dev/null | cut -d " " -f2)" == "" ]] && echo "" || echo "(\$(git branch 2>/dev/null | cut -d " " -f2)) ")'
+	PS1='\[\033]0;\u:\$PWD\007\]'
+	PS1="\$PS1"'\[\e[92m\]\u\[\e[0m\]@\[\e[38;5;27m\]\h\[\e[0m\] \[\e[95m\]\w\[\e[96m\] '
+	PS1="\$PS1""\$PS1_GIT"
+	PS1="\$PS1"'\[\e[0m\]$ '
 	unset PS1_GIT
 P
 )
 __smartrm=$(cat << SR
 #!/bin/bash
-for arg in "\\\$@"; do
-	if [ -d "\\\$arg" ]; then
-		rm -rf "\\\$arg"
+
+[[ "\$1" =~ ^(-f|--force)$ ]] && { choice='f'; shift; } || choice='I'
+
+while [[ -n "\$1" ]]; do
+	echo "\$1"
+  if [[ "\$1" =~ ^- ]]; then
+		if [[ -d "\$1" ]]; then
+			rm -r"\$choice" -- "\$1"
+		else
+			rm -"\$choice" -- "\$1"
+		fi
+	elif [[ -d "$1" ]]; then
+		rm -r"\$choice" "\$1"
 	else
-		rm -f "\\\$arg"
+		rm -"\$choice" "\$1"
 	fi
-done
+shift; done
 SR
 )
 __smartcp=$(cat <<- SC
 	#!/bin/bash
-	[[ -d "\\\$1" ]] && cp -r "\\\${1}" "\\\${2}/" || cp "\\\${1}" "\\\${2}/\\\${1}"
+	[[ -d "\$1" ]] && cp -r "\${1}" "\${2}/" || cp "\${1}" "\${2}/\${1}"
 SC
 )
 __kjob=$(cat <<- K
 	#!/bin/bash
-	[ -z "\\\$1" ] && echo "Usage: kjob <processname>" || ( ps | grep "\\\$1" | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
+	[ -z "\$1" ] && echo "Usage: kjob <processname>" || ( ps | grep "\$1" | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
 K
 )
 __yn=$(cat <<- Y
 	#!/bin/bash
-	[[ ! "\\\$1" == "" && ! "\\\$2" == "" && ! "\\\$3" == "" ]] && ( read -rp "\\\$1 " yn; [[ "\\\${yn,}" =~ 'y' ]] && eval "\\\$2" || eval "\\\$3" ) || ( echo "Cannot process yn context!"; exit 1 )
+	[[ ! "\$1" == "" && ! "\$2" == "" && ! "\$3" == "" ]] && ( read -rp "\$1 " yn; [[ "\${yn,}" =~ 'y' ]] && eval "\$2" || eval "\$3" ) || ( echo "Cannot process yn context!"; exit 1 )
 Y
 )
 __cal=$(cat <<- CAL
 	#!/bin/bash
-	[ -z "\\\$1" ] && (while true; do read -p "> " expr; [[ "\\\$expr" =~ "q" ]] && exit || echo "\\\${expr}=\\\$((\\\${expr}))"; done ) || ( for arg in \\\$@; do echo "\\\${arg}=\\\$((\\\${arg}))"; done )
+	[ -z "\$1" ] && (while true; do read -p "> " expr; [[ "\$expr" =~ "q" ]] && exit || echo "\${expr}=\$((\${expr}))"; done ) || ( for arg in \$@; do echo "\${arg}=\$((\${arg}))"; done )
 CAL
 )
 __rcupdate=$(cat << RC
 # ENV EXT
-if [ -d \\\$HOME/.d ]; then
-	for rc in \\\$HOME/.d/*; do
-		if [ -f "\\\$rc" ]; then
-			. "\\\$rc"
+if [ -d \$HOME/.d ]; then
+	for rc in \$HOME/.d/*; do
+		if [ -f "\$rc" ]; then
+			. "\$rc"
 		fi
 	done
 fi
@@ -104,13 +114,13 @@ RC
 __funcs=$(cat << FUNC
 prompt() {
 	local err=0
-	trap 'return \\\$err' SIGINT
+	trap 'return \$err' SIGINT
 	history -w
 	history -c
-	read -rep "\\\$*" var
-	echo "\\\$var"
+	read -rep "\$*" var
+	echo "\$var"
 	history -r
-	return \\\$err
+	return \$err
 }; export -f prompt
 FUNC
 )
