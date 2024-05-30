@@ -64,7 +64,6 @@ __smartrm=$(cat << SR
 [[ "\$1" =~ ^(-f|--force)$ ]] && { choice='f'; shift; } || choice='I'
 
 while [[ -n "\$1" ]]; do
-	echo "\$1"
   if [[ "\$1" =~ ^- ]]; then
 		if [[ -d "\$1" ]]; then
 			rm -r"\$choice" -- "\$1"
