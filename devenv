@@ -67,7 +67,7 @@ __alias=$(cat <<- A
 	alias hr="print \\"%0.s-\\" \\\$(seq 1 \\\$COLUMNS)"
 
 	# Alias to see versions of all apps installed to repos
-	alias appvs="for _repo in ~/repos/*; do \$(basename \$_repo) --version; done; unset _repo;"
+	alias appvs="for _repo in ~/repos/*; do \$(basename \$_repo) --version 2>/dev/null; done; unset _repo;"
 
 	### Execute aliases ###
 A
