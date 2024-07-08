@@ -7,6 +7,7 @@ Simply run `devenv` in the terminal of your choice and watch as your optimal dev
 - CLI App Generator (clapp)
 - Virtual Environment Manager (vem)
 - Path Manager (chpath)
+- Semantic Versioner (semver)
 
 **Sets up**:
 - A repos folder at ~/repos
