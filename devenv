@@ -13,16 +13,23 @@ __alias=$(cat <<- A
 	alias df="df -h"
 	alias du="du -h"
 
+	### Ensured presets ###
+	alias la="ls -A"
+	alias ll="ls -l -A"
+
 	### QOL aliases ###
+	# Ubuntu-specific
 	alias update="sudo apt update; sudo apt upgrade -y"
-	alias reload="source ~/.bashrc"
+	alias ipkg="sudo apt install"
 	alias shutdown="shutdown now"
+	
+	# All
+	alias reload="source ~/.bashrc"
 	alias tping="time ping"
 	alias edit-a="[ -f ~/.d/alias?(es) ] && nano ~/.d/alias?(es) || nano ~/.*(alias)?(es)"
 	alias edit-rc="[ -f ~/.d/rc ] && nano ~/.d/rc || nano ~/.bashrc"
 	alias edit-p="nano ~/.d/prompt"
 	alias edit-p="nano ~/.d/funcs"
-	alias ipkg="sudo apt install"
 
 	### Other aliases ###
 	# Git
@@ -32,6 +39,17 @@ __alias=$(cat <<- A
 
 	# VENV
 	alias de="deactivate"
+
+	# Network Tools
+	alias ip="ip addr show 2>/dev/null || ipconfig"
+	alias ns="nslookup"
+
+	# String Tools
+	alias sub="expr substr"
+	alias len="expr length"
+
+	# Other
+	alias iperl="perl -e 'do{print(\\"perl> \\");\\\$_x=<>;chomp \\\$_x;print(eval(\\\$_x).\\"\\n\\")}while(\\\$_x ne \\"q\\")'"
 
 	### Rebound Aliases ###
 	# Clear
@@ -45,13 +63,17 @@ __alias=$(cat <<- A
 	alias rm="smart-rm"
 	alias cp="smart-cp"
 
+	# Shorthand Formats (REQUIRES EXPAND_ALIASES)
+	alias hr="print \\"%0.s-\\" \\\$(seq 1 \\\$COLUMNS)"
+
+	# Alias to see versions of all apps installed to repos
+	alias appvs="for _repo in ~/repos/*; do \$(basename \$_repo) --version; done; unset _repo;"
+
 	### Execute aliases ###
-	#reposync
 A
 )
 __prompt=$(cat <<- P
-	PS1_GIT='\$([[ "\$(git branch 2>/dev/null | cut -d " " -f2)" == "" ]] && echo "" || echo "(\$(git branch 2>/dev/null | cut -d " " -f2)) ")'
-	PS1='\[\033]0;\u:\$PWD\007\]'
+	PS1_GIT='\$([[ -n "\$(git branch 2>/dev/null | cut -d " " -f2)" ]] && echo "(\$(git branch 2>/dev/null | cut -d " " -f2)) " || { [[ -e ./.git ]] && echo "(\$(git config --global --list | grep defaultbranch | cut -d '=' -f2)) "; })'
 	PS1="\$PS1"'\[\e[92m\]\u\[\e[0m\]@\[\e[38;5;27m\]\h\[\e[0m\] \[\e[95m\]\w\[\e[96m\] '
 	PS1="\$PS1""\$PS1_GIT"
 	PS1="\$PS1"'\[\e[0m\]$ '
@@ -100,6 +122,12 @@ CAL
 )
 __rcupdate=$(cat << RC
 # ENV EXT
+shopt -s extglob
+shopt -s checkwinsize
+shopt -s checkhash
+set -o igncr
+set -o emacs
+
 if [ -d \$HOME/.d ]; then
 	for rc in \$HOME/.d/*; do
 		if [ -f "\$rc" ]; then
@@ -107,10 +135,15 @@ if [ -d \$HOME/.d ]; then
 		fi
 	done
 fi
+
+export COLUMNS LINES TZ=\$(tzset)
 RC
 )
 
 __funcs=$(cat << FUNC
+### QoL Functions ###
+
+# Use this instead of the \`read\` command
 prompt() {
 	local err=0
 	trap 'return \$err' SIGINT
@@ -173,7 +206,7 @@ if [[ "${yn,,}" =~ "y" ]]; then
 	cd "$__cwd" || exit
 fi
 
-# Make all new bin scripts executable
+# Ensure all new bin scripts executable
 chown -R "$USER" "$HOME"/bin/*
 chgrp -R "$USER" "$HOME"/bin/*
 chmod -R +x "$HOME"/bin/*
