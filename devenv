@@ -206,6 +206,14 @@ if [[ "${yn,,}" =~ "y" ]]; then
 	cd "$__cwd" || exit
 fi
 
+# CLI Semver
+read -rp "Would you like to install the Semantic Versioner? " yn
+if [[ "${yn,,}" =~ "y" ]]; then
+	cd "$HOME"/repos || exit
+	git clone https://github.com/CodeKing710/semver
+	cd "$__cwd" || exit
+fi
+
 # Ensure all new bin scripts executable
 chown -R "$USER" "$HOME"/bin/*
 chgrp -R "$USER" "$HOME"/bin/*
