@@ -51,10 +51,10 @@ __alias=$(cat <<- A
 	# Other
 	alias iperl="perl -e 'do{print(\\"perl> \\");\\\$_x=<>;chomp \\\$_x;print(eval(\\\$_x).\\"\\n\\")}while(\\\$_x ne \\"q\\")'"
 
-	### Rebound Aliases ###
+	### Re-bound Aliases ###
 	# Clear
 	alias fclear="tput clear"
-	alias clear="tput -x clear" # Adjust by adding \$(printf "%\$((\$COLUMNS*\$LINES))s";)
+	alias clear="tput -x clear"
 	## Uncomment the below ones if you want shorthand
 	#alias fclr="fclear"
 	#alias clr="clear"
