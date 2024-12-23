@@ -19,9 +19,9 @@ __alias=$(cat <<- A
 
 	### QOL aliases ###
 	# Ubuntu-specific
-	alias update="sudo apt update; sudo apt upgrade -y"
-	alias ipkg="sudo apt install"
-	alias shutdown="shutdown now"
+	#alias update="sudo apt update; sudo apt upgrade -y"
+	#alias ipkg="sudo apt install"
+	#alias shutdown="shutdown now"
 	
 	# All
 	alias reload="source ~/.bashrc"
@@ -29,7 +29,7 @@ __alias=$(cat <<- A
 	alias edit-a="[ -f ~/.d/alias?(es) ] && nano ~/.d/alias?(es) || nano ~/.*(alias)?(es)"
 	alias edit-rc="[ -f ~/.d/rc ] && nano ~/.d/rc || nano ~/.bashrc"
 	alias edit-p="nano ~/.d/prompt"
-	alias edit-p="nano ~/.d/funcs"
+	alias edit-f="nano ~/.d/funcs"
 
 	### Other aliases ###
 	# Git
@@ -49,7 +49,7 @@ __alias=$(cat <<- A
 	alias len="expr length"
 
 	# Other
-	alias iperl="perl -e 'do{print(\\"perl> \\");\\\$_x=<>;chomp \\\$_x;print(eval(\\\$_x).\\"\\n\\")}while(\\\$_x ne \\"q\\")'"
+	#alias iperl="perl -e 'do{print(\\"perl> \\");\\\$_x=<>;chomp \\\$_x;print(eval(\\\$_x).\\"\\n\\")}while(\\\$_x ne \\"q\\")'"
 
 	### Re-bound Aliases ###
 	# Clear
@@ -60,20 +60,27 @@ __alias=$(cat <<- A
 	#alias clr="clear"
 
 	# Remove and Copy
-	alias rm="smart-rm"
-	alias cp="smart-cp"
+	#alias rm="smart-rm"
+	#alias cp="smart-cp"
 
 	# Shorthand Formats (REQUIRES EXPAND_ALIASES)
 	alias hr="print \\"%0.s-\\" \\\$(seq 1 \\\$COLUMNS)"
 
 	# Alias to see versions of all apps installed to repos
-	alias appvs="for _repo in ~/repos/*; do \$(basename \$_repo) --version 2>/dev/null; done; unset _repo;"
+	#alias appvs="for _repo in ~/repos/*; do \$(basename \$_repo) --version 2>/dev/null; done; unset _repo;"
 
 	### Execute aliases ###
 A
 )
 __prompt=$(cat <<- P
-	PS1_GIT='\$([[ -n "\$(git branch 2>/dev/null | cut -d " " -f2)" ]] && echo "(\$(git branch 2>/dev/null | cut -d " " -f2)) " || { [[ -e ./.git ]] && echo "(\$(git config --global --list | grep defaultbranch | cut -d '=' -f2)) "; })'
+	git_branch_prompt() {
+		if [[ -n "\$(git branch 2>/dev/null)" ]]; then
+			echo -en "(\$(git branch 2>/dev/null | grep '*' | cut -d' ' -f2)) "
+		else
+			echo -en ''
+		fi
+	}
+	PS1_GIT='\$(git_branch_prompt)'
 	PS1="\$PS1"'\[\e[92m\]\u\[\e[0m\]@\[\e[38;5;27m\]\h\[\e[0m\] \[\e[95m\]\w\[\e[96m\] '
 	PS1="\$PS1""\$PS1_GIT"
 	PS1="\$PS1"'\[\e[0m\]$ '
@@ -175,6 +182,9 @@ FUNC
 [ ! -e "$HOME"/bin/smart-cp ] && echo "$__smartcp" > "$HOME"/bin/smart-cp
 [ ! -e "$HOME"/bin/yn ] && echo "$__yn" > "$HOME"/bin/yn
 [ ! -e "$HOME"/bin/cal ] && echo "$__cal" > "$HOME"/bin/cal
+
+# Remind user to check alias file for aliases that are commented that they may want
+echo "Please check your alias file for any aliases you may want to uncomment!"
 
 # Ask about installing helper programs
 # BSM
