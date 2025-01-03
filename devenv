@@ -81,7 +81,7 @@ __prompt=$(cat <<- P
 		fi
 	}
 	PS1_GIT='\$(git_branch_prompt)'
-	PS1="\$PS1"'\[\e[92m\]\u\[\e[0m\]@\[\e[38;5;27m\]\h\[\e[0m\] \[\e[95m\]\w\[\e[96m\] '
+	PS1='\[\e[92m\]\u\[\e[0m\]@\[\e[38;5;27m\]\h\[\e[0m\] \[\e[95m\]\w\[\e[96m\] '
 	PS1="\$PS1""\$PS1_GIT"
 	PS1="\$PS1"'\[\e[0m\]$ '
 	unset PS1_GIT
@@ -132,7 +132,8 @@ __rcupdate=$(cat << RC
 shopt -s extglob
 shopt -s checkwinsize
 shopt -s checkhash
-set -o igncr
+# Uncomment the below line if you want to use the Windows Git Bash
+#set -o igncr
 set -o emacs
 
 if [ -d \$HOME/.d ]; then
@@ -143,7 +144,7 @@ if [ -d \$HOME/.d ]; then
 	done
 fi
 
-export COLUMNS LINES TZ=\$(tzset)
+export COLUMNS LINES
 RC
 )
 
@@ -189,28 +190,32 @@ echo "Please check your alias file for any aliases you may want to uncomment!"
 # Ask about installing helper programs
 # BSM
 read -rp "Would you like to install the script manager? " yn
-if [[ "${yn,,}" =~ "y" ]]; then
+yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
+if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/bsm
 	cd "$__cwd" || exit
 fi
 # CLApp
 read -rp "Would you like to install the CLI app generator? " yn
-if [[ "${yn,,}" =~ "y" ]]; then
+yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
+if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/clapp
 	cd "$__cwd" || exit
 fi
 # VEM
 read -rp "Would you like to install the Virtual Environment Manager? " yn
-if [[ "${yn,,}" =~ "y" ]]; then
+yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
+if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/vem
 	cd "$__cwd" || exit
 fi
 # CHPATH
 read -rp "Would you like to install the Path Manager? " yn
-if [[ "${yn,,}" =~ "y" ]]; then
+yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
+if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/chpath
 	cd "$__cwd" || exit
@@ -218,7 +223,8 @@ fi
 
 # CLI Semver
 read -rp "Would you like to install the Semantic Versioner? " yn
-if [[ "${yn,,}" =~ "y" ]]; then
+yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
+if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/semver
 	cd "$__cwd" || exit
@@ -226,7 +232,8 @@ fi
 
 # Regular Expression Builder
 read -rp "Would you like to install the Regular Expression Builder? " yn
-if [[ "${yn,,}" =~ "y" ]]; then
+yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
+if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/bsed
 	cd "$__cwd" || exit
@@ -239,7 +246,8 @@ chmod -R +x "$HOME"/bin/*
 
 # Ask if user wants to remove the repo since the environment is setup
 read -rp "Would you like to delete the repo? " yn
-if [[ "${yn,,}" =~ "y" ]]; then
+yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
+if [[ "$yn" =~ "y" ]]; then
 	rm -rf "$(find ~ -type d -name devenv)"
 fi
 
