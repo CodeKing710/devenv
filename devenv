@@ -252,6 +252,6 @@ if [[ "$yn" =~ "y" ]]; then
 fi
 
 # Cleanup
-if [ "$$" -eq "$BASHPID" ]; then
+if [[ "$$" -eq "$BASHPID" ]]; then
 	unset __alias __prompt __smartrm __smartcp __yn __kjob __rcupdate __cal yn __cwd
 fi
