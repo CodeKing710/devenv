@@ -1,90 +1,93 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Sets up a common environment (Bash/GitBash)
 
 # Vars
 __cwd=$(pwd)
 __alias=$(cat <<- A
-	### Safety nets ###
-	alias chgrp="chgrp --preserve-root"
-	alias chown="chown --preserve-root"
-	alias chmod="chmod --preserve-root"
-	alias mv="mv -i"
-	alias df="df -h"
-	alias du="du -h"
+### Safety nets ###
+#alias chgrp="chgrp --preserve-root"
+#alias chown="chown --preserve-root"
+#alias chmod="chmod --preserve-root"
+alias mv="mv -i"
+alias df="df -h"
+alias du="du -h"
 
-	### Ensured presets ###
-	alias la="ls -A"
-	alias ll="ls -l -A"
+### Ensured presets ###
+alias la="ls -A"
+alias ll="ls -l -A"
 
-	### QOL aliases ###
-	# Ubuntu-specific
-	#alias update="sudo apt update; sudo apt upgrade -y"
-	#alias ipkg="sudo apt install"
-	#alias shutdown="shutdown now"
-	
-	# All
-	alias reload="source ~/.bashrc"
-	alias tping="time ping"
-	alias edit-a="[ -f ~/.d/alias?(es) ] && nano ~/.d/alias?(es) || nano ~/.*(alias)?(es)"
-	alias edit-rc="[ -f ~/.d/rc ] && nano ~/.d/rc || nano ~/.bashrc"
-	alias edit-p="nano ~/.d/prompt"
-	alias edit-f="nano ~/.d/funcs"
+### QOL aliases ###
+# Ubuntu-specific
+#alias update="sudo apt update; sudo apt upgrade -y"
+#alias ipkg="sudo apt install"
+#alias shutdown="shutdown now"
 
-	### Other aliases ###
-	# Git
-	alias pull="git pull"
-	alias push="git push"
-	alias reposync="__cwd=\$(pwd); for repo in ~/repos/*; do cd \$repo; basename \$repo; pull; push; echo ' '; fi; done; cd \$__cwd; unset repo __cwd"
+# All
+alias reload="source ~/.bashrc"
+alias tping="time ping"
+alias edit-a="[ -f ~/.d/alias?(es) ] && nano ~/.d/alias?(es) || nano ~/.*(alias)?(es)"
+alias edit-rc="[ -f ~/.d/rc ] && nano ~/.d/rc || nano ~/.bashrc"
+alias edit-p="nano ~/.d/prompt"
+alias edit-f="nano ~/.d/funcs"
 
-	# VENV
-	alias de="deactivate"
+### Other aliases ###
+# Git
+alias pull="git pull"
+alias push="git push"
+alias reposync="__cwd=\$(pwd); for repo in ~/repos/*; do cd \$repo; basename \$repo; pull; push; echo ' '; fi; done; cd \$__cwd; unset repo __cwd"
 
-	# Network Tools
-	alias ip="ip addr show 2>/dev/null || ipconfig"
-	alias ns="nslookup"
+# VENV
+alias de="deactivate"
 
-	# String Tools
-	alias sub="expr substr"
-	alias len="expr length"
+# Network Tools
+alias ip="ip addr show 2>/dev/null || ipconfig"
+alias ns="nslookup"
 
-	# Other
-	#alias iperl="perl -e 'do{print(\\"perl> \\");\\\$_x=<>;chomp \\\$_x;print(eval(\\\$_x).\\"\\n\\")}while(\\\$_x ne \\"q\\")'"
+# String Tools
+alias sub="expr substr"
+alias len="expr length"
 
-	### Re-bound Aliases ###
-	# Clear
-	alias fclear="tput clear"
-	alias clear="tput -x clear"
-	## Uncomment the below ones if you want shorthand
-	#alias fclr="fclear"
-	#alias clr="clear"
+# Other
+#alias iperl="perl -e 'do{print(\\"perl> \\");\\\$_x=<>;chomp \\\$_x;print(eval(\\\$_x).\\"\\n\\")}while(\\\$_x ne \\"q\\")'"
 
-	# Remove and Copy
-	#alias rm="smart-rm"
-	#alias cp="smart-cp"
+### Re-bound Aliases ###
+# Clear (Uncomment the aliases that work for your system)
+### Git Bash/Linux
+#alias fclear="tput clear"
+#alias clear="tput -x clear"
+### MacOS
+#alias fclear="clear; tput E3 clear"
+## Uncomment the below ones if you want shorthand
+#alias fclr="fclear"
+#alias clr="clear"
 
-	# Shorthand Formats (REQUIRES EXPAND_ALIASES)
-	alias hr="print \\"%0.s-\\" \\\$(seq 1 \\\$COLUMNS)"
+# Remove and Copy
+#alias rm="smart-rm"
+#alias cp="smart-cp"
 
-	# Alias to see versions of all apps installed to repos
-	#alias appvs="for _repo in ~/repos/*; do \$(basename \$_repo) --version 2>/dev/null; done; unset _repo;"
+# Shorthand Formats (REQUIRES EXPAND_ALIASES)
+alias hr="print \\"%0.s-\\" \\\$(seq 1 \\\$COLUMNS)"
 
-	### Execute aliases ###
+# Alias to see versions of all apps installed to repos
+alias appvs="for _repo in ~/repos/*; do \\\$(basename \\\$_repo) --version 2>/dev/null; done; unset _repo;"
+
+### Execute aliases ###
 A
 )
 __prompt=$(cat <<- P
-	git_branch_prompt() {
-		if [[ -n "\$(git branch 2>/dev/null)" ]]; then
-			echo -en "(\$(git branch 2>/dev/null | grep '*' | cut -d' ' -f2)) "
-		else
-			echo -en ''
-		fi
-	}
-	PS1_GIT='\$(git_branch_prompt)'
-	PS1='\[\e[92m\]\u\[\e[0m\]@\[\e[38;5;27m\]\h\[\e[0m\] \[\e[95m\]\w\[\e[96m\] '
-	PS1="\$PS1""\$PS1_GIT"
-	PS1="\$PS1"'\[\e[0m\]$ '
-	unset PS1_GIT
+git_branch_prompt() {
+	if [[ -n "\$(git branch 2>/dev/null)" ]]; then
+		echo -en "(\$(git branch 2>/dev/null | grep '*' | cut -d' ' -f2)) "
+	else
+		echo -en ''
+	fi
+}
+PS1_GIT='\$(git_branch_prompt)'
+PS1='\[\e[92m\]\u\[\e[0m\]@\[\e[38;5;27m\]\h\[\e[0m\] \[\e[95m\]\w\[\e[96m\] '
+PS1="\$PS1""\$PS1_GIT"
+PS1="\$PS1"'\[\e[0m\]$ '
+unset PS1_GIT
 P
 )
 __smartrm=$(cat << SR
@@ -108,23 +111,23 @@ shift; done
 SR
 )
 __smartcp=$(cat <<- SC
-	#!/bin/bash
-	[[ -d "\$1" ]] && cp -r "\${1}" "\${2}/" || cp "\${1}" "\${2}/\${1}"
+#!/bin/bash
+[[ -d "\$1" ]] && cp -r "\${1}" "\${2}/" || cp "\${1}" "\${2}/\${1}"
 SC
 )
 __kjob=$(cat <<- K
-	#!/bin/bash
-	[ -z "\$1" ] && echo "Usage: kjob <processname>" || ( ps | grep "\$1" | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
+#!/bin/bash
+[ -z "\$1" ] && echo "Usage: kjob <processname>" || ( ps | grep "\$1" | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
 K
 )
 __yn=$(cat <<- Y
-	#!/bin/bash
-	[[ ! "\$1" == "" && ! "\$2" == "" && ! "\$3" == "" ]] && ( read -rp "\$1 " yn; [[ "\${yn,}" =~ 'y' ]] && eval "\$2" || eval "\$3" ) || ( echo "Cannot process yn context!"; exit 1 )
+#!/bin/bash
+[[ ! "\$1" == "" && ! "\$2" == "" && ! "\$3" == "" ]] && ( read -rp "\$1 " yn; [[ "\${yn,}" =~ 'y' ]] && eval "\$2" || eval "\$3" ) || ( echo "Cannot process yn context!"; exit 1 )
 Y
 )
 __cal=$(cat <<- CAL
-	#!/bin/bash
-	[ -z "\$1" ] && (while true; do read -p "> " expr; [[ "\$expr" =~ "q" ]] && exit || echo "\${expr}=\$((\${expr}))"; done ) || ( for arg in \$@; do echo "\${arg}=\$((\${arg}))"; done )
+#!/bin/bash
+[ -z "\$1" ] && (while true; do read -rep "\$PS2" expr; [[ "\$expr" =~ "q" ]] && exit || echo "\${expr}=\$((\${expr}))"; done ) || ( for arg in "\$@"; do echo "\${arg}=\$((\${arg}))"; done )
 CAL
 )
 __rcupdate=$(cat << RC
@@ -172,17 +175,17 @@ FUNC
 [[ ! "$(cat "$HOME"/.bashrc)" =~ "# ENV EXT" ]] && echo "$__rcupdate" >> "$HOME"/.bashrc
 
 # Setup user's home directory
-[ ! -d "$HOME"/bin ] && mkdir "$HOME"/bin
-[ ! -d "$HOME"/.d ] && mkdir "$HOME"/.d
-[ ! -d "$HOME"/repos ] && mkdir "$HOME"/repos
-[ ! -e "$HOME"/.d/alias ] && echo "$__alias" > "$HOME"/.d/alias
-[ ! -e "$HOME"/.d/prompt ] && echo "$__prompt" > "$HOME"/.d/prompt
-[ ! -e "$HOME"/.d/funcs ] && echo "$__funcs" > "$HOME"/.d/funcs
-[ ! -e "$HOME"/bin/kjob ] && echo "$__kjob" > "$HOME"/bin/kjob
-[ ! -e "$HOME"/bin/smart-rm ] && echo "$__smartrm" > "$HOME"/bin/smart-rm
-[ ! -e "$HOME"/bin/smart-cp ] && echo "$__smartcp" > "$HOME"/bin/smart-cp
-[ ! -e "$HOME"/bin/yn ] && echo "$__yn" > "$HOME"/bin/yn
-[ ! -e "$HOME"/bin/cal ] && echo "$__cal" > "$HOME"/bin/cal
+[ ! -d "$HOME/bin" ] && mkdir "$HOME/bin"
+[ ! -d "$HOME/.d" ] && mkdir "$HOME/.d"
+[ ! -d "$HOME/repos" ] && mkdir "$HOME/repos"
+[ ! -e "$HOME/.d/alias" ] && echo "$__alias" > "$HOME/.d/alias"
+[ ! -e "$HOME/.d/prompt" ] && echo "$__prompt" > "$HOME/.d/prompt"
+[ ! -e "$HOME/.d/funcs" ] && echo "$__funcs" > "$HOME/.d/funcs"
+[ ! -e "$HOME/bin/kjob" ] && echo "$__kjob" > "$HOME/bin/kjob"
+[ ! -e "$HOME/bin/smart-rm" ] && echo "$__smartrm" > "$HOME/bin/smart-rm"
+[ ! -e "$HOME/bin/smart-cp" ] && echo "$__smartcp" > "$HOME/bin/smart-cp"
+[ ! -e "$HOME/bin/yn" ] && echo "$__yn" > "$HOME/bin/yn"
+[ ! -e "$HOME/bin/cal" ] && echo "$__cal" > "$HOME/bin/cal"
 
 # Remind user to check alias file for aliases that are commented that they may want
 echo "Please check your alias file for any aliases you may want to uncomment!"
@@ -242,7 +245,7 @@ fi
 # Ensure all new bin scripts executable
 chown -R "$USER" "$HOME"/bin/*
 chgrp -R "$USER" "$HOME"/bin/*
-chmod -R +x "$HOME"/bin/*
+chmod -R 755 "$HOME"/bin/*
 
 # Ask if user wants to remove the repo since the environment is setup
 read -rp "Would you like to delete the repo? " yn
@@ -255,3 +258,5 @@ fi
 if [[ "$$" -eq "$BASHPID" ]]; then
 	unset __alias __prompt __smartrm __smartcp __yn __kjob __rcupdate __cal yn __cwd
 fi
+
+exit 0
