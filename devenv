@@ -4,7 +4,7 @@
 
 # Vars
 __cwd=$(pwd)
-__alias=$(cat <<- A
+__alias=$(cat <<- ALIAS
 ### Safety nets ###
 #alias chgrp="chgrp --preserve-root"
 #alias chown="chown --preserve-root"
@@ -73,9 +73,9 @@ alias hr="print \\"%0.s-\\" \\\$(seq 1 \\\$COLUMNS)"
 alias appvs="for _repo in ~/repos/*; do \\\$(basename \\\$_repo) --version 2>/dev/null; done; unset _repo;"
 
 ### Execute aliases ###
-A
+ALIAS
 )
-__prompt=$(cat <<- P
+__prompt=$(cat <<- PROMPT
 git_branch_prompt() {
 	if [[ -n "\$(git branch 2>/dev/null)" ]]; then
 		echo -en "(\$(git branch 2>/dev/null | grep '*' | cut -d' ' -f2)) "
@@ -88,7 +88,7 @@ PS1='\[\e[92m\]\u\[\e[0m\]@\[\e[38;5;27m\]\h\[\e[0m\] \[\e[95m\]\w\[\e[96m\] '
 PS1="\$PS1""\$PS1_GIT"
 PS1="\$PS1"'\[\e[0m\]$ '
 unset PS1_GIT
-P
+PROMPT
 )
 __smartrm=$(cat << SR
 #!/bin/bash
@@ -115,15 +115,15 @@ __smartcp=$(cat <<- SC
 [[ -d "\$1" ]] && cp -r "\${1}" "\${2}/" || cp "\${1}" "\${2}/\${1}"
 SC
 )
-__kjob=$(cat <<- K
+__kjob=$(cat <<- KJOB
 #!/bin/bash
 [ -z "\$1" ] && echo "Usage: kjob <processname>" || ( ps | grep "\$1" | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
-K
+KJOB
 )
-__yn=$(cat <<- Y
+__yn=$(cat <<- YN
 #!/bin/bash
 [[ ! "\$1" == "" && ! "\$2" == "" && ! "\$3" == "" ]] && ( read -rp "\$1 " yn; [[ "\${yn,}" =~ 'y' ]] && eval "\$2" || eval "\$3" ) || ( echo "Cannot process yn context!"; exit 1 )
-Y
+YN
 )
 __cal=$(cat <<- CAL
 #!/bin/bash
@@ -251,7 +251,7 @@ chmod -R 755 "$HOME"/bin/*
 read -rp "Would you like to delete the repo? " yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [[ "$yn" =~ "y" ]]; then
-	rm -rf "$(find ~ -type d -name devenv)"
+	rm -rf "$(find ~ -type d -name devenv 2>/dev/null)"
 fi
 
 # Cleanup
