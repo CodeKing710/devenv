@@ -244,7 +244,7 @@ fi
 
 # Ensure all new bin scripts executable
 chown -R "$USER" "$HOME"/bin/*
-chgrp -R "$USER" "$HOME"/bin/*
+# chgrp -R "$USER" "$HOME"/bin/*
 chmod -R 755 "$HOME"/bin/*
 
 # Ask if user wants to remove the repo since the environment is setup
