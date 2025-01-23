@@ -24,18 +24,18 @@ alias ll="ls -l -A"
 #alias shutdown="shutdown now"
 
 # All
-alias reload="source ~/.bashrc"
+alias reload="source \\"~/.bashrc\\""
 alias tping="time ping"
-alias edit-a="[ -f ~/.d/alias?(es) ] && nano ~/.d/alias?(es) || nano ~/.*(alias)?(es)"
-alias edit-rc="[ -f ~/.d/rc ] && nano ~/.d/rc || nano ~/.bashrc"
-alias edit-p="nano ~/.d/prompt"
-alias edit-f="nano ~/.d/funcs"
+alias edit-a="[ -f \\"~/.d/alias*\\" ] && nano \\"~/.d/alias*\\" || nano \\"~/.*alias*\\""
+alias edit-rc="[ -f \\"~/.d/rc\\" ] && nano \\"~/.d/rc\\" || nano \\"~/.bashrc\\""
+alias edit-p="nano \\"~/.d/prompt\\""
+alias edit-f="nano \\"~/.d/funcs\\""
 
 ### Other aliases ###
 # Git
 alias pull="git pull"
 alias push="git push"
-alias reposync="__cwd=\$(pwd); for repo in ~/repos/*; do cd \$repo; basename \$repo; pull; push; echo ' '; fi; done; cd \$__cwd; unset repo __cwd"
+alias reposync="__cwd=\\\$(pwd); for repo in ~/repos/*; do cd \\\$repo; basename \\\$repo; pull; push; echo ' '; done; cd \\\$__cwd; unset repo __cwd"
 
 # VENV
 alias de="deactivate"
@@ -75,12 +75,12 @@ alias appvs="for _repo in ~/repos/*; do \\\$(basename \\\$_repo) --version 2>/de
 ### Execute aliases ###
 ALIAS
 )
-__prompt=$(cat <<- PROMPT
+__prompt=$(cat << PROMPT
 git_branch_prompt() {
-	if [[ -n "\$(git branch 2>/dev/null)" ]]; then
-		echo -en "(\$(git branch 2>/dev/null | grep '*' | cut -d' ' -f2)) "
+	if [ -n "\$(git branch 2>/dev/null)" ]; then
+		printf "(\$(git branch 2>/dev/null | grep '*' | cut -d' ' -f2)) "
 	else
-		echo -en ''
+		printf ''
 	fi
 }
 PS1_GIT='\$(git_branch_prompt)'
@@ -158,11 +158,12 @@ __funcs=$(cat << FUNC
 prompt() {
 	local err=0
 	trap 'return \$err' SIGINT
-	history -w
-	history -c
-	read -rep "\$*" var
+	#history -w
+	#history -c
+	printf "\$*"
+	read -r var
 	echo "\$var"
-	history -r
+	#history -r
 	return \$err
 }; export -f prompt
 FUNC
@@ -172,7 +173,7 @@ FUNC
 [ -z "$USER" ] && echo 'USER=`id -u -n`' >> "$HOME"/.bashrc
 
 # Ensure user's .bashrc file contains .d check
-[[ ! "$(cat "$HOME"/.bashrc)" =~ "# ENV EXT" ]] && echo "$__rcupdate" >> "$HOME"/.bashrc
+if ! grep -q "# ENV EXT" "$HOME/.bashrc"; then echo "$__rcupdate" >> "$HOME/.bashrc"; fi
 
 # Setup user's home directory
 [ ! -d "$HOME/bin" ] && mkdir "$HOME/bin"
@@ -181,18 +182,19 @@ FUNC
 [ ! -e "$HOME/.d/alias" ] && echo "$__alias" > "$HOME/.d/alias"
 [ ! -e "$HOME/.d/prompt" ] && echo "$__prompt" > "$HOME/.d/prompt"
 [ ! -e "$HOME/.d/funcs" ] && echo "$__funcs" > "$HOME/.d/funcs"
-[ ! -e "$HOME/bin/kjob" ] && echo "$__kjob" > "$HOME/bin/kjob"
-[ ! -e "$HOME/bin/smart-rm" ] && echo "$__smartrm" > "$HOME/bin/smart-rm"
-[ ! -e "$HOME/bin/smart-cp" ] && echo "$__smartcp" > "$HOME/bin/smart-cp"
-[ ! -e "$HOME/bin/yn" ] && echo "$__yn" > "$HOME/bin/yn"
-[ ! -e "$HOME/bin/cal" ] && echo "$__cal" > "$HOME/bin/cal"
+# [ ! -e "$HOME/bin/kjob" ] && echo "$__kjob" > "$HOME/bin/kjob"
+# [ ! -e "$HOME/bin/smart-rm" ] && echo "$__smartrm" > "$HOME/bin/smart-rm"
+# [ ! -e "$HOME/bin/smart-cp" ] && echo "$__smartcp" > "$HOME/bin/smart-cp"
+# [ ! -e "$HOME/bin/yn" ] && echo "$__yn" > "$HOME/bin/yn"
+# [ ! -e "$HOME/bin/cal" ] && echo "$__cal" > "$HOME/bin/cal"
 
 # Remind user to check alias file for aliases that are commented that they may want
 echo "Please check your alias file for any aliases you may want to uncomment!"
 
 # Ask about installing helper programs
 # BSM
-read -rp "Would you like to install the script manager? " yn
+printf "Would you like to install the script manager? "
+read -r yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
@@ -200,7 +202,8 @@ if [[ "$yn" =~ "y" ]]; then
 	cd "$__cwd" || exit
 fi
 # CLApp
-read -rp "Would you like to install the CLI app generator? " yn
+printf "Would you like to install the CLI app generator? "
+read -r yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
@@ -208,7 +211,8 @@ if [[ "$yn" =~ "y" ]]; then
 	cd "$__cwd" || exit
 fi
 # VEM
-read -rp "Would you like to install the Virtual Environment Manager? " yn
+printf "Would you like to install the Virtual Environment Manager? "
+read -r yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
@@ -216,7 +220,8 @@ if [[ "$yn" =~ "y" ]]; then
 	cd "$__cwd" || exit
 fi
 # CHPATH
-read -rp "Would you like to install the Path Manager? " yn
+printf "Would you like to install the Path Manager? "
+read -rp  yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
@@ -225,7 +230,8 @@ if [[ "$yn" =~ "y" ]]; then
 fi
 
 # CLI Semver
-read -rp "Would you like to install the Semantic Versioner? " yn
+printf "Would you like to install the Semantic Versioner? "
+read -r yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
@@ -234,7 +240,8 @@ if [[ "$yn" =~ "y" ]]; then
 fi
 
 # Regular Expression Builder
-read -rp "Would you like to install the Regular Expression Builder? " yn
+printf "Would you like to install the Regular Expression Builder? "
+read -r yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [[ "$yn" =~ "y" ]]; then
 	cd "$HOME"/repos || exit
@@ -248,15 +255,14 @@ chown -R "$USER" "$HOME"/bin/*
 chmod -R 755 "$HOME"/bin/*
 
 # Ask if user wants to remove the repo since the environment is setup
-read -rp "Would you like to delete the repo? " yn
+printf "Would you like to delete the repo? "
+read -r yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
-if [[ "$yn" =~ "y" ]]; then
-	rm -rf "$(find ~ -type d -name devenv 2>/dev/null)"
+if [ "$yn" = "y" ]; then
+	rm -r -f "$(find ~ -type d -name devenv 2>/dev/null)"
 fi
 
 # Cleanup
-if [[ "$$" -eq "$BASHPID" ]]; then
-	unset __alias __prompt __smartrm __smartcp __yn __kjob __rcupdate __cal yn __cwd
-fi
+unset __alias __prompt __smartrm __smartcp __yn __kjob __rcupdate __cal yn __cwd
 
 exit 0
