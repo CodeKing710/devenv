@@ -170,7 +170,7 @@ FUNC
 )
 
 # Ensure env vars are good
-[ -z "$USER" ] && echo 'USER=`id -u -n`' >> "$HOME"/.bashrc
+[ -z "$USER" ] && echo "USER=\$(id -u -n)" >> "$HOME"/.bashrc
 
 # Ensure user's .bashrc file contains .d check
 if ! grep -q "# ENV EXT" "$HOME/.bashrc"; then echo "$__rcupdate" >> "$HOME/.bashrc"; fi
@@ -196,7 +196,7 @@ echo "Please check your alias file for any aliases you may want to uncomment!"
 printf "Would you like to install the script manager? "
 read -r yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
-if [[ "$yn" =~ "y" ]]; then
+if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/bsm
 	cd "$__cwd" || exit
@@ -205,7 +205,7 @@ fi
 printf "Would you like to install the CLI app generator? "
 read -r yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
-if [[ "$yn" =~ "y" ]]; then
+if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/clapp
 	cd "$__cwd" || exit
@@ -214,16 +214,16 @@ fi
 printf "Would you like to install the Virtual Environment Manager? "
 read -r yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
-if [[ "$yn" =~ "y" ]]; then
+if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/vem
 	cd "$__cwd" || exit
 fi
 # CHPATH
 printf "Would you like to install the Path Manager? "
-read -rp  yn
+read -r  yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
-if [[ "$yn" =~ "y" ]]; then
+if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/chpath
 	cd "$__cwd" || exit
@@ -233,7 +233,7 @@ fi
 printf "Would you like to install the Semantic Versioner? "
 read -r yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
-if [[ "$yn" =~ "y" ]]; then
+if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/semver
 	cd "$__cwd" || exit
@@ -243,7 +243,7 @@ fi
 printf "Would you like to install the Regular Expression Builder? "
 read -r yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
-if [[ "$yn" =~ "y" ]]; then
+if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
 	git clone https://github.com/CodeKing710/bsed
 	cd "$__cwd" || exit
