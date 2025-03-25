@@ -84,13 +84,13 @@ git_branch_prompt() {
 	fi
 }
 set_title() {
-  printf "\033]0;\${USER}:\${PWD} (\$(ps -o comm=))\007"
+  printf "\033]0;\${USER}:\${PWD}\007"
 }
 PS1_GIT='\$(git_branch_prompt)'
 PROMPT_COMMAND='set_title'
-PS1="\$(tput bold; tput setaf 1)[\\\$?] \$(tput setaf 2)\u\$(tput setaf 7)@\$(tput setaf 4)\h \$(tput setaf 5)\W\$(tput sgr0; tput setaf 6) "
+PS1='\[\$(if [ \$? -eq 0 ]; then tput setaf 2; else tput setaf 1; fi; printf "*"; tput bold)\]'" \[\$(tput setaf 2)\]\u\[\$(tput setaf 7)\]@\[\$(tput setaf 4)\]\h \[\$(tput setaf 5)\]\W\[\$(tput sgr0; tput setaf 6)\] "
 PS1="\$PS1""\$PS1_GIT"
-PS1="\$PS1"'\$(tput sgr0)\\$ '
+PS1="\$PS1"'\[\$(tput sgr0)\]\\$ '
 unset PS1_GIT
 PROMPT
 )
