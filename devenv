@@ -62,10 +62,6 @@ alias len="expr length"
 #alias fclr="fclear"
 #alias clr="clear"
 
-# Remove and Copy
-#alias rm="smart-rm"
-#alias cp="smart-cp"
-
 # Shorthand Formats (REQUIRES EXPAND_ALIASES)
 alias hr="print \\"%0.s-\\" \\\$(seq 1 \\\$COLUMNS)"
 
@@ -88,46 +84,11 @@ set_title() {
 }
 PS1_GIT='\$(git_branch_prompt)'
 PROMPT_COMMAND='set_title'
-PS1='\[\$(if [ \$? -eq 0 ]; then tput setaf 2; else tput setaf 1; fi; printf "*"; tput bold)\]'" \[\$(tput setaf 2)\]\u\[\$(tput setaf 7)\]@\[\$(tput setaf 4)\]\h \[\$(tput setaf 5)\]\W\[\$(tput sgr0; tput setaf 6)\] "
+PS1='\[\$(if [ \$? -eq 0 ]; then tput setaf 2; else tput setaf 1; fi)\]'"* \[\$(tput bold; tput setaf 2)\]\u\[\$(tput setaf 7)\]@\[\$(tput setaf 4)\]\h \[\$(tput setaf 5)\]\W\[\$(tput sgr0; tput setaf 6)\] "
 PS1="\$PS1""\$PS1_GIT"
 PS1="\$PS1"'\[\$(tput sgr0)\]\\$ '
 unset PS1_GIT
 PROMPT
-)
-__smartrm=$(cat << SR
-#!/bin/bash
-
-[[ "\$1" =~ ^(-f|--force)$ ]] && { choice='f'; shift; } || choice='I'
-
-while [[ -n "\$1" ]]; do
-  if [[ "\$1" =~ ^- ]]; then
-		if [[ -d "\$1" ]]; then
-			rm -r"\$choice" -- "\$1"
-		else
-			rm -"\$choice" -- "\$1"
-		fi
-	elif [[ -d "$1" ]]; then
-		rm -r"\$choice" "\$1"
-	else
-		rm -"\$choice" "\$1"
-	fi
-shift; done
-SR
-)
-__smartcp=$(cat <<- SC
-#!/bin/bash
-[[ -d "\$1" ]] && cp -r "\${1}" "\${2}/" || cp "\${1}" "\${2}/\${1}"
-SC
-)
-__kjob=$(cat <<- KJOB
-#!/bin/bash
-[ -z "\$1" ] && echo "Usage: kjob <processname>" || ( ps | grep "\$1" | sed "s| \\+| |g" | sed "s/ //" | cut -d ' ' -f1 | xargs -i kill {} )
-KJOB
-)
-__yn=$(cat <<- YN
-#!/bin/bash
-[[ ! "\$1" == "" && ! "\$2" == "" && ! "\$3" == "" ]] && ( read -rp "\$1 " yn; [[ "\${yn,}" =~ 'y' ]] && eval "\$2" || eval "\$3" ) || ( echo "Cannot process yn context!"; exit 1 )
-YN
 )
 __cal=$(cat <<- CAL
 #!/bin/bash
@@ -186,11 +147,7 @@ if ! grep -q "# ENV EXT" "$HOME/.bashrc"; then echo "$__rcupdate" >> "$HOME/.bas
 [ ! -e "$HOME/.d/alias" ] && echo "$__alias" > "$HOME/.d/alias"
 [ ! -e "$HOME/.d/prompt" ] && echo "$__prompt" > "$HOME/.d/prompt"
 [ ! -e "$HOME/.d/funcs" ] && echo "$__funcs" > "$HOME/.d/funcs"
-# [ ! -e "$HOME/bin/kjob" ] && echo "$__kjob" > "$HOME/bin/kjob"
-# [ ! -e "$HOME/bin/smart-rm" ] && echo "$__smartrm" > "$HOME/bin/smart-rm"
-# [ ! -e "$HOME/bin/smart-cp" ] && echo "$__smartcp" > "$HOME/bin/smart-cp"
-# [ ! -e "$HOME/bin/yn" ] && echo "$__yn" > "$HOME/bin/yn"
-# [ ! -e "$HOME/bin/cal" ] && echo "$__cal" > "$HOME/bin/cal"
+[ ! -e "$HOME/bin/cal" ] && echo "$__cal" > "$HOME/bin/cal"
 
 # Remind user to check alias file for aliases that are commented that they may want
 echo "Please check your alias file for any aliases you may want to uncomment!"
