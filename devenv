@@ -11,25 +11,31 @@ __alias=$(cat <<- ALIAS
 #alias chmod="chmod --preserve-root"
 alias mv="mv -i"
 alias df="df -h"
-alias du="du -h"
+alias du="du -csh"
 
 ### Ensured presets ###
 alias la="ls -A"
-alias ll="ls -l -A"
+alias ll="ls -l -s -A"
 
-### QOL aliases ###
+### QOL aliases - Uncomment to Use ###
 # Ubuntu-specific
 #alias update="sudo apt update; sudo apt upgrade -y"
 #alias ipkg="sudo apt install"
 #alias shutdown="shutdown now"
 
+# Arch-specific
+#alias up="sudo pacman -Syu --noconfirm; sudo pacman -Qdtq | sudo pacman -Rs -;"
+#alias i="sudo pacman -Sy --noconfirm"
+#alias shutdown="shutdown now"
+#alias reboot="sudo reboot now"
+
 # All
-alias reload="source \\"~/.bashrc\\""
+alias reload="source ~/.bashrc"
 alias tping="time ping"
-alias edit-a="[ -f \\"~/.d/alias*\\" ] && nano \\"~/.d/alias*\\" || nano \\"~/.*alias*\\""
-alias edit-rc="[ -f \\"~/.d/rc\\" ] && nano \\"~/.d/rc\\" || nano \\"~/.bashrc\\""
-alias edit-p="nano \\"~/.d/prompt\\""
-alias edit-f="nano \\"~/.d/funcs\\""
+alias edit-a="[ -f ~/.d/alias* ] && nano ~/.d/alias* || nano ~/.*alias*"
+alias edit-rc="[ -f ~/.d/rc ] && nano ~/.d/rc || nano ~/.bashrc"
+alias edit-p="nano ~/.d/prompt"
+alias edit-f="nano ~/.d/funcs"
 
 ### Other aliases ###
 # Git
@@ -37,7 +43,7 @@ alias pull="git pull"
 alias push="git push"
 alias reposync="__cwd=\\\$(pwd); for repo in ~/repos/*; do cd \\\$repo; basename \\\$repo; pull; push; echo ' '; done; cd \\\$__cwd; unset repo __cwd"
 
-# VENV
+# Python deactivation VENV
 alias de="deactivate"
 
 # Network Tools
@@ -90,6 +96,25 @@ PS1="\$PS1"'\[\$(tput sgr0)\]\\$ '
 unset PS1_GIT
 PROMPT
 )
+__root_prompt=$(cat <<RPROMPTT
+git_branch_prompt() {
+	if [ -n "\$(git branch 2>/dev/null)" ]; then
+		printf "(\$(git branch 2>/dev/null | grep '*' | cut -d' ' -f2)) "
+	else
+		printf ''
+	fi
+}
+set_title() {
+  printf "\033]0;\${USER}:\${PWD}\007"
+}
+PS1_GIT='\$(git_branch_prompt)'
+PROMPT_COMMAND='set_title'
+PS1='\[\$(if [ \$? -eq 0 ]; then tput setaf 2; else tput setaf 1; fi)\]'"* \[\$(tput bold; tput setaf 1)\]\u\[\$(tput setaf 7)\]@\[\$(tput setaf 1)\]\h \[\$(tput setaf 7)\]\W\[\$(tput sgr0; tput setaf 6)\] "
+PS1="\$PS1""\$PS1_GIT"
+PS1="\$PS1"'\[\$(tput sgr0)\]\\$ '
+unset PS1_GIT
+RPROMPTT
+)
 __cal=$(cat <<- CAL
 #!/bin/bash
 [ -z "\$1" ] && (while true; do read -rep "\$PS2" expr; [[ "\$expr" =~ "q" ]] && exit || echo "\${expr}=\$((\${expr}))"; done ) || ( for arg in "\$@"; do echo "\${arg}=\$((\${arg}))"; done )
@@ -100,9 +125,9 @@ __rcupdate=$(cat << RC
 shopt -s extglob
 shopt -s checkwinsize
 shopt -s checkhash
+set -o emacs
 # Uncomment the below line if you want to use the Windows Git Bash
 #set -o igncr
-set -o emacs
 
 if [ -d \$HOME/.d ]; then
 	for rc in \$HOME/.d/*; do
@@ -149,13 +174,24 @@ if ! grep -q "# ENV EXT" "$HOME/.bashrc"; then echo "$__rcupdate" >> "$HOME/.bas
 [ ! -e "$HOME/.d/funcs" ] && echo "$__funcs" > "$HOME/.d/funcs"
 [ ! -e "$HOME/bin/cal" ] && echo "$__cal" > "$HOME/bin/cal"
 
+# Setup root user's directory
+printf "Would you like to setup the root user directory with a similar environment? \n"
+read -rn1 yn
+yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
+if [ "$yn" = "y" ]; then
+  [ ! -d "/root/.d" ] && sudo mkdir -p "/root/.d"
+  [ ! -e "/root/.d/alias" ] && echo "$__alias" | sudo tee "/root/.d/alias" >/dev/null
+  [ ! -e "/root/.d/prompt" ] && echo "$__root_prompt" | sudo tee "/root/.d/prompt" >/dev/null
+  [ ! -e "/root/.d/funcs" ] && echo "$__funcs" | sudo tee "/root/.d/funcs" >/dev/null
+fi
+
 # Remind user to check alias file for aliases that are commented that they may want
-echo "Please check your alias file for any aliases you may want to uncomment!"
+echo "Please check your alias file(s) for any aliases you may want to uncomment!"
 
 # Ask about installing helper programs
 # BSM
-printf "Would you like to install the script manager? "
-read -r yn
+printf "\nWould you like to install the script manager? \n"
+read -rn1 yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
@@ -163,8 +199,8 @@ if [ "$yn" = "y" ]; then
 	cd "$__cwd" || exit
 fi
 # CLApp
-printf "Would you like to install the CLI app generator? "
-read -r yn
+printf "\nWould you like to install the CLI app generator? \n"
+read -rn1 yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
@@ -172,8 +208,8 @@ if [ "$yn" = "y" ]; then
 	cd "$__cwd" || exit
 fi
 # VEM
-printf "Would you like to install the Virtual Environment Manager? "
-read -r yn
+printf "\nWould you like to install the Virtual Environment Manager? \n"
+read -rn1 yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
@@ -181,8 +217,8 @@ if [ "$yn" = "y" ]; then
 	cd "$__cwd" || exit
 fi
 # CHPATH
-printf "Would you like to install the Path Manager? "
-read -r  yn
+printf "\nWould you like to install the Path Manager? \n"
+read -rn1 yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
@@ -191,8 +227,8 @@ if [ "$yn" = "y" ]; then
 fi
 
 # CLI Semver
-printf "Would you like to install the Semantic Versioner? "
-read -r yn
+printf "\nWould you like to install the Semantic Versioner? \n"
+read -rn1 yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
@@ -201,8 +237,8 @@ if [ "$yn" = "y" ]; then
 fi
 
 # Regular Expression Builder
-printf "Would you like to install the Regular Expression Builder? "
-read -r yn
+printf "\nWould you like to install the Regular Expression Builder? \n"
+read -rn1 yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [ "$yn" = "y" ]; then
 	cd "$HOME"/repos || exit
@@ -211,13 +247,12 @@ if [ "$yn" = "y" ]; then
 fi
 
 # Ensure all new bin scripts executable
-chown -R "$USER" "$HOME"/bin/*
-# chgrp -R "$USER" "$HOME"/bin/*
-chmod -R 755 "$HOME"/bin/*
+sudo chown -R "$USER" "$HOME"/bin/*
+sudo chmod -R 755 "$HOME"/bin/*
 
 # Ask if user wants to remove the repo since the environment is setup
-printf "Would you like to delete the repo? "
-read -r yn
+printf "\nWould you like to delete the repo? \n"
+read -rn1 yn
 yn="$(echo "$yn" | tr "[:upper:]" "[:lower:]")"
 if [ "$yn" = "y" ]; then
 	rm -r -f "$(find ~ -type d -name devenv 2>/dev/null)"
